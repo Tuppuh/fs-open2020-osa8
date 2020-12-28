@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const Author = require('./models/author')
 const Book = require('./models/book')
 
-const MONGODB_URI = 'mongodb+srv://tuomo:Atlasloukko203@cluster0.exyge.mongodb.net/booklist?retryWrites=true&w=majority'
+const MONGODB_URI = ''
 
 console.log('connecting to', MONGODB_URI)
 
@@ -135,8 +135,8 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
+    bookCount: () => Book.collection.countDocuments(),
+    authorCount: () => Author.collection.countDocuments(),
     allBooks: (root, args) => {
       const authorFiltered = args.author ? books.filter(book => book.author === args.author) : books
       const genreFiltered = args.genre ? authorFiltered.filter(book => book.genres.includes(args.genre)) : authorFiltered
