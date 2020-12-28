@@ -1,4 +1,20 @@
 const { ApolloServer, gql } = require('apollo-server')
+const mongoose = require('mongoose')
+const Author = require('./models/author')
+const Book = require('./models/book')
+
+const MONGODB_URI = 'mongodb+srv://tuomo:Atlasloukko203@cluster0.exyge.mongodb.net/booklist?retryWrites=true&w=majority'
+
+console.log('connecting to', MONGODB_URI)
+
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
+
 const { v1: uuidv1 } = require('uuid');
 
 let authors = [
@@ -87,9 +103,10 @@ let books = [
 const typeDefs = gql`
   type Book {
     title: String!
-    author: String!
+    author: Author!
     published: Int!
     genres: [String!]!
+    id: ID!
   }
   type Author {
     name: String!
@@ -134,6 +151,7 @@ const resolvers = {
   } ,
   Mutation: {
     addBook: (root, args) => {
+      console.log(args)
       let author = authors.find(a => a.name === args.author)
       if (!author){
         author = {name: args.author, id: uuidv1()}
